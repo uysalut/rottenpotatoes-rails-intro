@@ -1,4 +1,5 @@
 class MoviesController < ApplicationController
+  before_action :set_checked, only: :index
 
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
@@ -11,12 +12,22 @@ class MoviesController < ApplicationController
   end
 
   def index
+
     if params[:title_sorted]
       @movies = Movie.order(title: :asc)
       @title = "hilite"
     elsif params[:date_sorted]
       @movies = Movie.order(release_date: :asc)
       @date = "hilite"
+    elsif params[:ratings]
+      @movies = Movie.where(rating: params[:ratings].keys)
+      @all_ratings.each do |r|
+        if params[:ratings].keys.include? r 
+          @checked[r] = true
+        else
+          @checked[r] = false
+        end
+      end
     else
       @movies = Movie.all
     end
@@ -49,5 +60,13 @@ class MoviesController < ApplicationController
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
   end
+  
+  private
+  def set_checked
+    @all_ratings = Movie.get_ratings
+    @checked = {@all_ratings => true}
+  end
+  
+    
 
 end
