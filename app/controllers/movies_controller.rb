@@ -1,5 +1,5 @@
 class MoviesController < ApplicationController
-  before_action :set_checked, only: :index
+  before_action :set_checked
 
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
@@ -12,7 +12,6 @@ class MoviesController < ApplicationController
   end
 
   def index
-
     if params[:title_sorted]
       @movies = Movie.order(title: :asc)
       @title = "hilite"
@@ -61,10 +60,9 @@ class MoviesController < ApplicationController
     redirect_to movies_path
   end
   
-  private
   def set_checked
     @all_ratings = Movie.get_ratings
-    @checked = {@all_ratings => true}
+    @checked = {'G' => true, 'PG' => true, 'PG-13' => true, 'R' => true}
   end
   
     
